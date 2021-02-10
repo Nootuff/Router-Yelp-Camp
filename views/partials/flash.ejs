@@ -1,0 +1,11 @@
+<% if(successFlash && successFlash.length) { %>     <!-- Checks to see if successFlash is present and it has a length, if they are the div shows up on the page, if successFlash isn't there, no div at all. You could build an x button into this that users could press to dismiss the flash message using a js function. -->
+    <div class="successFlash">
+        <%= successFlash%>
+    </div>
+    <% } %>
+
+    <% if(errorFlash && errorFlash.length) { %>     
+    <div class="errorFlash">
+        <%= errorFlash%>
+    </div>
+    <% } %>

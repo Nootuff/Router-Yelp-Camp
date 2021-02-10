@@ -1,0 +1,9 @@
+<nav>
+<h1>YelpCamp</h1>
+<% if(!currentUser) {%> <!--If there is NOT a current user, detemined by the existance of the currentUser item in the flash section of app,js, show these 2 links.-->
+<a class="navItem" href="/login">Login</a>
+<a class="navItem" href="/register">Register</a>
+<% } else {%> <!--If there is a current user & that item exists, show this link.-->
+<a class="navItem" href="/logout">Logout</a>
+<% } %>
+        </nav>

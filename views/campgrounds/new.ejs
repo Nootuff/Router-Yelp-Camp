@@ -1,0 +1,59 @@
+<% layout("/boilerplate") %>
+  <main>
+    <section>
+      <h1>Create new campground</h1>
+      <form class="validated-form" action="/campgrounds" method="POST" novalidate>
+        <!--novalidate seems to work alongside the "required" statements below to prevent a new camp being creadted without all the info being inputted. It switches off html's normal handling of non inputted data I think, so you can create your own handling and prompts-->
+        <div>
+          <label for="title">Title</label><br>
+          <input type="text" id="title" name="campground[title]" required><br>
+          <!--Apparently the square brackets let you group all the data passed via post request to the server,
+            everything in the reqeust.body will be stored under "campground" no idea how this works, connects somehow
+            with the ... in the put route on app.js. All the "required" s mean the user must enter something into this
+            value when creating a new campground. Usually html has it's own message for this, novalidate above disables them so we can write our own and do our own styling. -->
+        </div>
+        <div>
+          <label for="location">Location</label><br>
+          <input type="text" id="location" name="campground[location]" required><br>
+        </div>
+        <div>
+          <label for="image">Camp Image</label><br>
+          <input type="text" id="image" name="campground[image]" required><br>
+        </div>
+        <div>
+          <label for="description">Description</label><br>
+          <textarea id="description" name="campground[description]" rows="4" cols="50" required>
+  Some sample text here.
+  </textarea>
+        </div>
+        <div>
+          <label for="price">Price</label><br>
+          <input type="text" id="price" name="campground[price]" required><br>
+        </div>
+        <button>Add campground</button>
+      </form>
+    </section>
+    <a href="/campgrounds"> Back to campgrounds</a>
+  </main>
+  <script>
+// JavaScript for disabling form submissions if there are invalid fields
+(function () {
+  'use strict'
+
+  // Select all the forms we want to apply thios to.
+  var forms = document.querySelectorAll('.validated-form')
+
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+  </script>

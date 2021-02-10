@@ -1,0 +1,31 @@
+#indexList{
+  line-height: 20%;
+}
+
+#indexItem{
+  margin-bottom: 35px;
+}
+
+nav{
+  width: 100%;
+  background-color: aqua;
+  height: 70px;
+  
+}
+
+.navItem{
+  float: right;
+  margin-right: 15px;
+}
+
+.successFlash{
+  background-color: #42f55a;
+  border-radius: 5px;
+  padding: 7px;
+}
+
+.errorFlash{
+  background-color: #ff3838;
+  border-radius: 5px;
+  padding: 7px;
+}

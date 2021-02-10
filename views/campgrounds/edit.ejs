@@ -1,0 +1,32 @@
+<% layout("/boilerplate") %>
+<main>
+  <section>
+<h1>Edit this camp!</h1>
+<form class="validated-form" action="/campgrounds/<%= campground._id%>?_method=PUT" method="POST" novalidate>
+    <div>
+    <label for="title">Title</label><br>
+      <input type="text" id="title" name="campground[title]" value="<%= campground.title%>" required><br> <!--Apparently the square brackets let  group all the  data passed via post request to the server, everyhting in the reqeust.body will be stored under "campground" no idea how this works, connects somehow with the ... in the put route on app.js --> 
+      </div>
+      <div>
+      <label for="location">Location</label><br>
+      <input type="text" id="location" name="campground[location]" value="<%= campground.location%>" required><br>
+    </div>
+    <div>
+      <label for="image">Camp Image</label><br>
+      <input type="text" id="image" name="campground[image]" value="<%= campground.image%>" required><br>
+    </div>
+    <div>
+      <label for="description">Description</label><br>
+<textarea id="description" name="campground[description]" rows="4" cols="50" required>
+  <%= campground.description%>
+  </textarea>
+    </div>
+    <div>
+      <label for="price">Price</label><br>
+      <input type="text" id="price" name="campground[price]" value="<%= campground.price%>" required><br>
+    </div>
+    <button>Update campground</button>
+    </form>
+</section>
+<a href="/campgrounds/<%= campground._id%>">Back to details page</a>
+</main>

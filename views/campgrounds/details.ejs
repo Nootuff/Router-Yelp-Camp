@@ -1,0 +1,54 @@
+<% layout("/boilerplate") %>
+  <main>
+    <section>
+      <h1>Welcome to <%= campground.title%>!</h1>
+      <h3>
+        <%= campground.location%>
+      </h3>
+      <br>
+      <img src="<%= campground.image%>" alt="Camp image" width="500" height="auto">
+      <br>
+      <p>
+        <%= campground.description%>
+      </p>
+      <p>Cost per night: £<%= campground.price%>
+      </p>
+      <a href="/campgrounds/<%= campground._id%>/edit"> Edit this campground</a>
+      <br>
+      <a href="/campgrounds"> Back to campgrounds</a>
+    </section>
+    <form action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
+      <!--this is using the stuff from methodOverride, note the question mark. This all links to the delete route in app.js -->
+      <button>Delete</button>
+    </form>
+    <form action="/campgrounds/<%=campground._id%>/reviews" method="POST" class="validated-form" novalidate > <!--novalidate tells the form not to use standard html validation as we have our own custom validation script in the boilerplate. The validated-form class allows the function in the script tag in the boilerplate to review this form, and not allow a submission if the textbox ix empty. -->
+
+<br>
+      <h2>Leave a review</h2>
+      <div>
+        <label for="rating">Rating</label>
+        <br>
+        <input type="range" min="1" max="5" name="review[rating]" id="rating" required></input> <!--[rating] is one of the objects from review.js just like [body] below, the slider sets the number that is passed when the review is created?-->
+      </div>
+      <div>
+        <label for="body">
+          Review
+        </label>
+        <br>
+        <textarea name="review[body]" id="body" rows="5" , cols="20" required></textarea>
+      </div>
+      <button>Submit</button>
+    </form>
+    <br>
+    <% for(var i=0; i < campground.reviews.length; i++) {%>
+      <div>
+      <h3>Review</h3>
+      <p><%=campground.reviews[i].body %></p>
+      <h3>Rating</h3>
+      <p><%= campground.reviews[i].rating %></p>
+      <form action="/campgrounds/<%=campground._id%>/reviews/<%=campground.reviews[i]._id%>?_method=DELETE" method="POST">
+        <button>Delete</button>
+        </form>
+      </div>
+      <% } %>    
+  </main>
