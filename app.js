@@ -38,7 +38,7 @@ app.set("views", path.join(__dirname, "/views"));
 
 app.use(express.urlencoded({ extended: true })); //This is what allows you to parse the data from the form in new.ejs, it is needed to parse form data. 
 app.use(methodOverride('_method'));
-app.use(express.static(path.join(__dirname + '/public'))); //This allows you to use the stuff in your public folder like the css doc and the js functions. When we use path.join with __dirname in the combination like that, we ensure that it always gets the correct path to the public folder, regardless of the terminal location from which we run the node command (and regardless of the specific OS file structure and path syntax), even if it's not in the main project folder 
+app.use(express.static(path.join(__dirname + '/public'))); //This allows you to use the stuff in your public folder like the css doc and the js functions. When we use path.join with __dirname in the combination like that, we ensure that it always gets the correct path to the public folder, regardless of the terminal location from which we run the node command (and regardless of the specific OS file structure and path syntax), even if it's not in the main project folder.
 
 const sessionConfig = {
     secret: "secretGoesHere",
