@@ -10,7 +10,7 @@ const campgroundSchema = new mongoose.Schema({ //Your schema, these are the only
   image: String,
   author: {
 type: Schema.Types.ObjectId,
-ref: "User"
+ref: "User" //Takes an objectID from the User model just like Review below, allowing this schema to access users, .populate("author") is used in the /:id route in the campgrounds .js page to allow all the user data to be used on the campgrounds details page. Takes the "User" ref from the module.exports section of the parent schema. 
   },
   reviews: [
     {

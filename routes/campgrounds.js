@@ -28,12 +28,12 @@ router.get("/new", isLoggedIn, function (req, res) { //isLoggedIn is the the mid
     });
 
 router.get("/:id", catchAsync(async (req, res) => { //Note that this has to be a lower  get route on the page or the system will interpret anything anything entered into the url after campgrounds/ as the :id you are attempting to search for eg. system will attempt to search for something with the the id of "new" instead of loading the "new" route. This must be lower as the system goes vertically down the page, the system will look at everything above it first. 
-    const campground = await Campground.findById(req.params.id).populate("reviews"); //The ID is taken from the url I think. The id is taken from the url and fed into .findById() which is a mongoose method which scans the Campground schema. 
+    const campground = await Campground.findById(req.params.id).populate("reviews").populate("author"); //The ID is taken from the url I think. The id is taken from the url and fed into .findById() which is a mongoose method which scans the Campground schema. The .populates are unpacking data stored as objectIds in the campground schema that are actually data from other schemas / databases namely reviews and users and making it available on the campground details page. 
+    console.log(campground);
     if (!campground) { //If mongoose didn't find a campground with that id, flash error then redirect
         req.flash("error", "Sorry that campground does not exist.");
         return res.redirect("/campgrounds") //No idea why return is needed here.
     }
-        console.log(campground);
     res.render("campgrounds/details.ejs", { campground });
 }));
 
