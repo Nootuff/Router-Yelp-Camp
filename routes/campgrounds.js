@@ -50,6 +50,7 @@ router.post("/", isLoggedIn, validateCampground, catchAsync(async (req, res, nex
     //if(!req.body.campground) throw new ExpressError("incomplete data", 400)
     console.log(req.body.campground);
     const campground = new Campground(req.body.campground); //No idea what req.body.campground actually is or what "campground" refers to, possibly the object that is created in new.ejs in that form, from the data that is inputted. 
+    campground.author = req.user._id; //req.user is automatically added in, they have to be logged in to even reach this page. The author value of this campground is set to the user._id of the user who made this post request.
     await campground.save(); //The await means the .save() has to happen before the redirect can run.
     req.flash("success", "You've created a new campground!"); //Triggers the flash message before the redirect after you create a campground. 
     res.redirect(`/campgrounds/${campground._id}`); //String template literal, note the backticks. Maybe you have to use string template literals for these page addresses? Passing a variable in never seems to work. 

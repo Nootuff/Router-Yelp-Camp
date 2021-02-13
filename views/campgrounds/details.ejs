@@ -11,8 +11,8 @@
       <p>
         <%= campground.description%>
       </p>
-      <p>Cost per night: £<%= campground.price%>
-      </p>
+      <p>Cost per night: £<%= campground.price%></p>
+      <p>Submitted By: <%= campground.author.username%></p>
       <a href="/campgrounds/<%= campground._id%>/edit"> Edit this campground</a>
       <br>
       <a href="/campgrounds"> Back to campgrounds</a>
