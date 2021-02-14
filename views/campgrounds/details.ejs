@@ -13,18 +13,21 @@
       </p>
       <p>Cost per night: £<%= campground.price%></p>
       <p>Submitted By: <%= campground.author.username%></p>
-      <a href="/campgrounds/<%= campground._id%>/edit"> Edit this campground</a>
+     
       <br>
-      <a href="/campgrounds"> Back to campgrounds</a>
+      
     </section>
+    <% if (currentUser && campground.author.equals(currentUser._id)){%><!-- This checks to see if the currentUser exists (if(currentUser) && their ._id is the same as campground authors ._id making them the same user. currentUser Seems to be coming from the flash section in app.js somehow, unsure if it is a placeholder for a value. That code gets run on every route so we can access currentUser in any ejs file. The .equals() method allows us to  actually compare id values. == and === apparently wouldn't work because both of these values are objects and this for some reason wouldn't work. -->
+    <a href="/campgrounds/<%= campground._id%>/edit"> Edit this campground</a>
     <form action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
       <!--this is using the stuff from methodOverride, note the question mark. This all links to the delete route in app.js -->
       <button>Delete</button>
     </form>
+    <% } %>
+    <a href="/campgrounds"> Back to campgrounds</a>
+    <% if(currentUser){%> <!--If the currentUser variable exists, eg. if someone, anyone is logged in. Render this h2 and form-->
+    <h2>Leave a review</h2>
     <form action="/campgrounds/<%=campground._id%>/reviews" method="POST" class="validated-form" novalidate > <!--novalidate tells the form not to use standard html validation as we have our own custom validation script in the boilerplate. The validated-form class allows the function in the script tag in the boilerplate to review this form, and not allow a submission if the textbox ix empty. -->
-
-<br>
-      <h2>Leave a review</h2>
       <div>
         <label for="rating">Rating</label>
         <br>
@@ -39,6 +42,7 @@
       </div>
       <button>Submit</button>
     </form>
+    <% } %>
     <br>
     <% for(var i=0; i < campground.reviews.length; i++) {%>
       <div>

@@ -7,21 +7,14 @@ const Review = require("../models/review") //Imports the review schema.
 
 const { reviewSchema } = require("../schemas.js") //Imports the code from this js document, this our or joi schema. this const is destructured. In the validateReview function below the Joi code this const holds is being used. 
 
+const { validateReview, isLoggedIn } =require("../middleware"); //Imports in the middlwares from middleware.js. 
+
 const ExpressError = require("../utilities/ExpressError"); //Imports the function from ExpressError.js.
 
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body) //We pass the entire body including the review infromation, rating and body 
-    if (error) {
-        const msg = error.details.map(element => element.message).join(",")
-        throw new ExpressError(msg, 400)
-    } else {
-        next(); //If there is no error then move on to the next thing.
-    }//This is another middleware designed to validate reviews. 
-}
-
-router.post("/", validateReview, catchAsync(async (req, res) => {
+router.post("/", isLoggedIn, validateReview, catchAsync(async (req, res) => { //Middlewares make sure there's something in teview text fields and a user is logged in to make the comment. 
     const campground = await Campground.findById(req.params.id);
     const review = new Review(req.body.review); //Create a new instance of a review from the Review model.
+    review.author = req.user._id;
     campground.reviews.push(review); //Push the newly created review into the reviews object of the campground whose id you have accessed.
     await review.save(); //The .save() method moves your data to the database collection.
     await campground.save();

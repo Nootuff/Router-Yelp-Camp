@@ -20,7 +20,7 @@ ref: "User" //Takes an objectID from the User model just like Review below, allo
   ]
 });
 
-campgroundSchema.post("findOneAndDelete", async function (item) { //This is a post middleware, runs after something? It has access to the campground (item) that that was just deleted, as, in the process of deleting, the campground is passed to this middleware. This middleware will only work when a campgrond is removed by findOneAndDelete like it is the app.delete route in app.js. If the campground was being removed by some other means this middleware wouldn't work. The delete methods have to match maybe? 
+campgroundSchema.post("findOneAndDelete", async function (item) { //This is a post middleware, runs after something? It has access to the campground (item) that that was just deleted, as, in the process of deleting, the campground is passed to this middleware. This middleware will only work when a campground is removed by findOneAndDelete like it is in the campground delete route in the campgrounds routes page. If the campground was being removed by some other means this middleware wouldn't work. The delete methods have to match maybe? 
   console.log(item)
   if (item) {//If something was actually found and deleted to begin with and the whole operation ran.
     await Review.deleteMany({
