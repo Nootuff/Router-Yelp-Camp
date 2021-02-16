@@ -13,6 +13,7 @@ db.once("open", () => {
 });
 
 const Campground = require("../models/campground") //imports the schema template from campground.js in the models folder.
+const Review = require("../models/review") 
 const { places, descriptors } = require("./seedHelpers");
 const Cities = require("./cities") //imports the array from  cities.js, that array is being exported, this imports it.
 
@@ -22,6 +23,7 @@ const sample = array => array[Math.floor(Math.random() * array.length)]; //This 
 
 const seedDB = async () => {
     await Campground.deleteMany({}); //I think this will delete everything already in the Campground collection so that new objects generated below can be added in . This function clears out the database of everything in it, ({}) means everything. This activates each time node index.js is run.
+    await Review.deleteMany({}); //Deletes all reviews on reseed. 
     for (let i = 0; i < 50; i++) { //This will generate 50 cities with locations and randomized titles.
         const random18 = Math.floor(Math.random() * 18)  //There are 18 city objects in the array in cities.js, this gens a new number between 0 and 18 I think.
         const costOfStaying = Math.floor(Math.random() * 20) + 10;
