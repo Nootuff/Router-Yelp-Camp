@@ -1,22 +1,25 @@
 const express = require('express');
 const router = express.Router();
+const campgrounds = require("../controllers/campgrounds");
 const catchAsync = require("../utilities/catchAsync"); //Notice the two dots, these are here because these files are being requested from a folder 1 level up from the current folder, this file path goes up one level and then into utilities. Imports the function in catchAsync.js, allows us to do async error handling.
 const Campground = require("../models/campground"); //imports the Mongoose schema template from campground.js in the models folder.
 const { isLoggedIn, isAuthor, validateCampground } = require("../middleware"); //Imports these middleware functions from the middleware file. This is a destructured const. The names by which they are invoked in the routes are also calling them from the middleware file. 
 
 const Joi = require('joi'); //This is used for error handling 
 
-router.get("/", catchAsync(async (req, res) => {
-    const campgrounds = await Campground.find({}) //Find everything in campgrounds collection. This const holds them all. Becasue of await, render doesn't occur until campgrounds has gathered all data. 
-    res.render("campgrounds/index.ejs", { campgrounds }); //pass them to the ejs document
-}));
+router.get("/", catchAsync());
 
 router.get("/new", isLoggedIn, function (req, res) { //isLoggedIn is the the middlewar function, detects whether a user has logged in otherwise they cannot view this route. Note no async, no mongoose / db stuff here, no need for it, no data being reqeusted.
     res.render("campgrounds/new.ejs");
 });
 
 router.get("/:id", catchAsync(async (req, res) => { //Note that this has to be a lower  get route on the page or the system will interpret anything anything entered into the url after campgrounds/ as the :id you are attempting to search for eg. system will attempt to search for something with the the id of "new" instead of loading the "new" route. This must be lower as the system goes vertically down the page, the system will look at everything above it first. 
-    const campground = await Campground.findById(req.params.id).populate("reviews").populate("author"); //The ID is taken from the url I think. The id is taken from the url and fed into .findById() which is a mongoose method which scans the Campground schema. The .populates are unpacking data stored as objectIds in the campground schema that are actually data from other schemas / databases namely reviews and users and making it available on the campground details page. 
+    const campground = await Campground.findById(req.params.id).populate({ 
+        path: "reviews", //The curly brackets show this is an object. On the campground we have found, populate it with it's reviews.
+        populate: { //Then populate each review with that review's author.
+            path: "author"
+        }
+    }).populate("author"); //The ID is taken from the url I think. The id is taken from the url and fed into .findById() which is a mongoose method which scans the Campground schema. The .populates are unpacking data stored as objectIds in the campground schema that are actually data from other schemas / databases namely reviews and users and making it available on the campground details page. This line populates the campground with its author. 
     console.log(campground);
     if (!campground) { //If mongoose didn't find a campground with that id, flash error then redirect
         req.flash("error", "Sorry that campground does not exist.");

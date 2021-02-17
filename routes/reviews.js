@@ -7,7 +7,7 @@ const Review = require("../models/review") //Imports the review schema.
 
 const { reviewSchema } = require("../schemas.js") //Imports the code from this js document, this our or joi schema. this const is destructured. In the validateReview function below the Joi code this const holds is being used. 
 
-const { validateReview, isLoggedIn } =require("../middleware"); //Imports in the middlwares from middleware.js. 
+const { validateReview, isLoggedIn, isReviewAuthor } =require("../middleware"); //Imports in the middlwares from middleware.js. 
 
 const ExpressError = require("../utilities/ExpressError"); //Imports the function from ExpressError.js.
 
@@ -22,7 +22,7 @@ router.post("/", isLoggedIn, validateReview, catchAsync(async (req, res) => { //
     res.redirect(`/campgrounds/${campground._id}`);
 }));
 
-router.delete("/:reviewId", catchAsync(async (req, res) => { //This will remove the reference to the review in the campground and reemove the review itself.
+router.delete("/:reviewId", isLoggedIn, isReviewAuthor, catchAsync(async (req, res) => { //This will remove the reference to the review in the campground and reemove the review itself. Becasue of the router stuff in app.js, the full url here is /campgrounds/:id/reviews/:reviewId referencing the campground id too. 
     const id = req.params.id
     const reviewId = req.params.reviewId
     await Campground.findByIdAndUpdate(id, {$pull: {reviews: reviewId}});//This lets you delete the object id that corresponds to that review from the campground.The $pull operator removes from an existing array all instances of a value or values that match a specified condition. This pulls the review with the review id from the url our of the reviews array of the campground with the id from the url. 

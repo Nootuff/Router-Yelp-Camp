@@ -2,6 +2,8 @@ const { campgroundSchema } = require("./schemas.js") //Imports the code from thi
 
 const { reviewSchema } = require("./schemas.js") //Imports the code from this js document, this our or joi schema. this const is destructured. In the validateReview function below the Joi code this const holds is being used. You could probably destructure this and combine it with the campgroundSchema const above if you wanted.
 
+const Review = require("./models/review");
+
 const ExpressError = require("./utilities/ExpressError"); //Imports the function from ExpressError.js. 
 
 const Campground = require("./models/campground"); //imports the Mongoose schema template from campground.js in the models folder.
@@ -13,7 +15,7 @@ module.exports.isLoggedIn = (req, res, next) => { //All middleware have req, res
     if (!req.isAuthenticated()) { //isAuthenticated is a method bought in by passport. It detects if the currect user is logged in (Authenticated)
         console.log(req.originalUrl);
         req.session.returnTo = req.originalUrl //originalUrl holds the URL they are requesting/page they want to go to when they hit the login screen maybe? returnTo will be the url we redirect the user back to. I think putting req.session before it adds the data of what they were trying to access to their session cookies.
-        req.flash("Error", "You must be signed in to do this.");
+        req.flash("error", "You must be signed in to do this.");
         return res.redirect("/login"); //These things activate if the user does not read as logged in. Always have a return on a redirect in an if statement. 
     }
     next();
@@ -38,6 +40,18 @@ module.exports.isAuthor = async (req, res, next) => {
     }
     next(); //If a user has permission to change this campground move on.
 }
+
+module.exports.isReviewAuthor = async (req, res, next) => {
+    const idHolder = req.params.id; //Holds the current campground id taken from the URL. Becasue of the router stuff in app.js, the full url in the reviews delete route is /campgrounds/:id/reviews/:reviewId referencing the campground id too so you'd have access to that id in the url.  
+       const reviewIdHolder = req.params.reviewId; //Holds the current review id taken from the URL. If you look at reviews.js, at the delete route, you can see this is is the url in that route, not sure what that means but it is a link between them.
+       const review = await Review.findById(reviewIdHolder); //Finds a review in the database with that id.
+           
+       if (!review.author.equals(req.user._id)) {//Look to see uf ther user whose logged in right now's Id matches the review you found's author id.	If the reviews' author is not the same as the current users Id, then show this flash error and redirect back to current campground. This if statement prevents people deleting reviews through hacking.
+           req.flash("error", "You do not have permission to do this.");
+           return res.redirect(`/campgrounds/${idHolder}`); //Redirect to current campground page. 
+       }
+       next(); //If a user has permission to change this campground move on.
+   }
 
 module.exports.validateReview = (req, res, next) => {
     const { error } = reviewSchema.validate(req.body) //We pass the entire body including the review infromation, rating and body 

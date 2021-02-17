@@ -50,9 +50,12 @@
       <p><%=campground.reviews[i].body %></p>
       <h3>Rating</h3>
       <p><%= campground.reviews[i].rating %></p>
+      <p>by: <%=campground.reviews[i].author.username%></p>
+      <% if (currentUser && campground.reviews[i].author.equals(currentUser._id)){%><!--If there is a currentUser (if you are logged in) & this review's author is the same as your _id the delete button will render. -->
       <form action="/campgrounds/<%=campground._id%>/reviews/<%=campground.reviews[i]._id%>?_method=DELETE" method="POST">
         <button>Delete</button>
         </form>
+         <% } %>
       </div>
       <% } %>    
   </main>
