@@ -9,7 +9,7 @@ mongoose.connect('mongodb://localhost:27017/test', {
 const db = mongoose.connection; //No idea what this code does, seems to just put messages in console log
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
-    console.log("database connected");
+    console.log("Database connected, regeneration complete.");
 });
 
 const Campground = require("../models/campground") //imports the schema template from campground.js in the models folder.
@@ -33,7 +33,16 @@ const seedDB = async () => {
             title: `${sample(descriptors)} ${sample(places)}`, //picks random values from descriptors & places & puts them together to make a title.
             description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             price: costOfStaying,
-            image: "https://source.unsplash.com/collection/2184453"
+            images: [
+                {
+                  url: 'https://res.cloudinary.com/dfj7xeo4n/image/upload/v1613753273/YelpCamp/mqqdrylekliutorbwyva.jpg',
+                  filename: 'YelpCamp/mqqdrylekliutorbwyva'
+                },
+                {               
+                  url: 'https://res.cloudinary.com/dfj7xeo4n/image/upload/v1613753288/YelpCamp/pusjkbef49byn6pefcpg.jpg',
+                  filename: 'YelpCamp/pusjkbef49byn6pefcpg'
+                },
+              ]
         })
         await camp.save();
     }

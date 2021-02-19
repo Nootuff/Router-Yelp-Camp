@@ -12,7 +12,9 @@ module.exports.renderNewForm  =  function (req, res) { //isLoggedIn is the the m
 module.exports.createCampground = async (req, res, next) => {//catchAsync is the function being imported above for the js file with the same name, it is the async error handling in this function. You need the isLoggedIn middleware here to make sure no one can use Postman or Ajax or something ot access this post route when they are not loggedin, it's protection.
     console.log(req.body.campground);
     const campground = new Campground(req.body.campground); //No idea what req.body.campground actually is or what "campground" refers to, possibly the object that is created in new.ejs in that form, from the data that is inputted. 
+    campground.images = req.files.map(file=>({url: file.path, filename: file.filename})) //This syntax is called implicit Returns. All the values like path come from Multer parsing the image I think, "file" is just a placeholder, can be anything. The way this function works, if you uploaded 2 files, they would be placed in an array by upload.array and added to "request.files" which can be accessed with req.files & is shown in the console.log above. Map() is then used to go over that array and assign path and filename to the images object of the new campground object you just created I think under the url and filename values.
     campground.author = req.user._id; //req.user is automatically added in, they have to be logged in to even reach this create campground page, the user details are taken from that somehow. The author value of this campground is set to the user._id of the user who made this post request.
+    console.log("Campground here", campground)
     await campground.save(); //The await means the .save() has to happen before the redirect can run.
     req.flash("success", "You've created a new campground!"); //Triggers the flash message before the redirect after you create a campground. 
     res.redirect(`/campgrounds/${campground._id}`); //String template literal, note the backticks. Maybe you have to use string template literals for these page addresses? Passing a variable in never seems to work. 
@@ -44,7 +46,10 @@ module.exports.renderEditForm = async (req, res) => { //isLoggedIn & isAuthor ar
 
 module.exports.updateCampground = async (req, res) => {
     const idHolder = req.params.id; //Holds the current campground id taken from the URL?
-    const campground = await Campground.findByIdAndUpdate(idHolder, { ...req.body.campground }) //The 3 dots are the spread operator this somehow allows you to use the values contained within the square brackets on the name values in the forms on the new and edit.ejs pages. 
+    const campground = await Campground.findByIdAndUpdate(idHolder, { ...req.body.campground }) //The 3 dots are the spread operator this somehow allows you to use the values contained within the square brackets on the name values in the forms on the new and edit.ejs pages.
+    const imgs = req.files.map(file=>({url: file.path, filename: file.filename}));//JUst like the create campground route above, this time, we are editing an existing campground not overwriting empty values with images as with the create route so we are pushing any uploaded files to an existing array of image files.
+    campground.images.push(...imgs);  //Three dots, spread operator, no idea. Somehow the data is being extracted from the uploaded images array, assigned to imgs and then pushed in the campround.images array. 
+    await campground.save();
     req.flash("success", "You've successfully updated this campground!");
     res.redirect(`/campgrounds/${campground._id}`);
 }

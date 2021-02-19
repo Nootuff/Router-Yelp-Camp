@@ -1,3 +1,8 @@
+if (process.env.NODE_ENV !== "production") {
+    require("dotenv").config()
+}
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require("path");
@@ -14,7 +19,7 @@ const User = require("./models/user"); //Imports the review schema.
 const catchAsync = require("./utilities/catchAsync"); //Imports the function in catchAsync.js, allows us to do async error handling. 
 const ejs = require('ejs');
 
-const userRoutes = require ("./routes/users");
+const userRoutes = require("./routes/users");
 const campgroundRoutes = require('./routes/campgrounds');//Imports the campgrounds routes, this is to do with router.
 const reviewRoutes = require('./routes/reviews');
 

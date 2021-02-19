@@ -2,7 +2,7 @@
   <main>
     <section>
       <h1>Create new campground</h1>
-      <form class="validated-form" action="/campgrounds" method="POST" novalidate>
+      <form class="validated-form" action="/campgrounds" method="POST" novalidate enctype="multipart/form-data">
         <!--novalidate seems to work alongside the "required" statements below to prevent a new camp being creadted without all the info being inputted. It switches off html's normal handling of non inputted data I think, so you can create your own handling and prompts-->
         <div>
           <label for="title">Title</label><br>
@@ -17,9 +17,14 @@
           <input type="text" id="location" name="campground[location]" required><br>
         </div>
         <div>
+        <input type="file" name="image" multiple>
+        </div>
+        <!--
+        <div>
           <label for="image">Camp Image</label><br>
           <input type="text" id="image" name="campground[image]" required><br>
         </div>
+        -->
         <div>
           <label for="description">Description</label><br>
           <textarea id="description" name="campground[description]" rows="4" cols="50" required>

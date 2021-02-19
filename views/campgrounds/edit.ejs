@@ -2,7 +2,7 @@
 <main>
   <section>
 <h1>Edit this camp!</h1>
-<form class="validated-form" action="/campgrounds/<%= campground._id%>?_method=PUT" method="POST" novalidate>
+<form class="validated-form" action="/campgrounds/<%= campground._id%>?_method=PUT" method="POST" novalidate enctype="multipart/form-data">
     <div>
     <label for="title">Title</label><br>
       <input type="text" id="title" name="campground[title]" value="<%= campground.title%>" required><br> <!--Apparently the square brackets let  group all the  data passed via post request to the server, everyhting in the reqeust.body will be stored under "campground" no idea how this works, connects somehow with the ... in the put route on app.js --> 
@@ -12,8 +12,10 @@
       <input type="text" id="location" name="campground[location]" value="<%= campground.location%>" required><br>
     </div>
     <div>
-      <label for="image">Camp Image</label><br>
-      <input type="text" id="image" name="campground[image]" value="<%= campground.image%>" required><br>
+      <label for="image">Upload more images</label><br>
+      <input type="file" name="image" id="image" multiple>
+      
+      <br>
     </div>
     <div>
       <label for="description">Description</label><br>
