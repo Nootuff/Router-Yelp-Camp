@@ -29,10 +29,10 @@
     </div>
     
     <% campground.images.forEach(function(img, i){%> <!--This just loops over all the images associated with this campground.-->
-      <img src="<%=img.url%>" alt="" class="editImg">
+      <img src="<%=img.thumbnail%>" alt="">
       <div>
         <label for="image-<%=i%>">Delete?</label>
-      <input type="checkbox" id="image-<%=i%>" name="deleteImages[]" value="<%img.filename%>">
+      <input type="checkbox" id="image-<%=i%>" name="deleteImages[]" value="<%=img.filename%>">
       <!--deleteImages is referenced in the schema doc, it has to be there for this to work. deleteImages is an array, when you tick the boxes on the edit page, the images whose tick-boxes you pressed will be added to that array & it will hold them. -->
       </div>
      

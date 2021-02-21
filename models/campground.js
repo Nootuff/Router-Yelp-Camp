@@ -2,15 +2,22 @@ const mongoose = require('mongoose');
 const Review = require('./review'); //Imports the review schema so it can be used below. 
 const Schema = mongoose.Schema;
 
+const ImageSchema = new Schema({
+  url: String,
+  filename: String
+});
+
+ImageSchema.virtual("thumbnail").get(function(){ //"thumbnail" is a placeholder, it can be called anything. The virtual method, not sure what it is, I think it means the modified image isn't being stored anywhere in our database, the transformed image isn't being stored anywhere, the image is just being modified each time it is called through the .replace below. Thumbnail also seems to be soemthing you can call on your pages 
+return this.url.replace("/upload", "/upload/w_200"); //"this" refers to the particular image. This code takes each images url and runs it through this replace method that adds in the w_200, more on this is detailed at the bottom of your mongo db basics notes. It's to do with Cloudinary's transformation system, adding in a little code can modify the image as its sent from the site. 
+
+})   
+
 const campgroundSchema = new mongoose.Schema({ //Your schema, these are the only properties you can have in your database.
   title: String,
   price: Number,
   description: String,
   location: String,
-  images: [{
-    url: String,
-    filename: String
-  }],
+  images: [ImageSchema], //This is the schema above nested within this one. 
   author: {
 type: Schema.Types.ObjectId,
 ref: "User" //Takes an objectID from the User model just like Review below, allowing this schema to access users, .populate("author") is used in the /:id route in the campgrounds .js page to allow all the user data to be used on the campgrounds details page. Takes the "User" ref from the module.exports section of the parent schema. 
