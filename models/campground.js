@@ -18,6 +18,17 @@ const campgroundSchema = new mongoose.Schema({ //Your schema, these are the only
   description: String,
   location: String,
   images: [ImageSchema], //This is the schema above nested within this one. 
+  geometry:{ //This stores the geocoder data sent from mapbox.
+    type:{
+    type: String, 
+    enum: ["Point"], //The enum keyword is used to restrict a value to a fixed set of values. It must be an array with at least one element, where each element is unique. When storing location data, the enum must be set to just  "Point", look up Using GeoJSON in the mongoose docs if you want to know more. 
+    required: true
+    },
+    coordinates: {
+    type: [Number], //The brackets mean its an array of that datatype, coordinates is an array of numbers.
+    required: true
+    }
+    },
   author: {
 type: Schema.Types.ObjectId,
 ref: "User" //Takes an objectID from the User model just like Review below, allowing this schema to access users, .populate("author") is used in the /:id route in the campgrounds .js page to allow all the user data to be used on the campgrounds details page. Takes the "User" ref from the module.exports section of the parent schema. 

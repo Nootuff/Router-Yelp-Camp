@@ -1,4 +1,5 @@
 <% layout("/boilerplate") %>
+
   <main>
     <section>
       <h1>Welcome to <%= campground.title%>!</h1>
@@ -9,18 +10,19 @@
       <% for(let img of campground.images){%>
         <img src="<%= img.url%>" alt="Camp image" width="500" height="auto">
         <%}%>
-        <p>Turn the code for this into a for loop you understand once course is done. You could probably build some kind of slideshow/ carousel to show these off one by one if there are multiple images.</p>
-      <br>
-      <p>
-        <%= campground.description%>
-      </p>
-      <p>Cost per night: £<%= campground.price%>
-      </p>
-      <p>Submitted By: <%= campground.author.username%>
-      </p>
+          <p>Turn the code for this into a for loop you understand once course is done. You could probably build some
+            kind of slideshow/ carousel to show these off one by one if there are multiple images.</p>
+          <br>
+          <p>
+            <%= campground.description%>
+          </p>
+          <p>Cost per night: £<%= campground.price%>
+          </p>
+          <p>Submitted By: <%= campground.author.username%>
+          </p>
 
-      <br>
-
+          <br>
+          <div id='map' style='width: 400px; height: 300px;'></div>
     </section>
     <% if (currentUser && campground.author.equals(currentUser._id)){%>
       <!-- This checks to see if the currentUser exists (if(currentUser) && their ._id is the same as campground authors ._id making them the same user. currentUser Seems to be coming from the flash section in app.js somehow, unsure if it is a placeholder for a value. That code gets run on every route so we can access currentUser in any ejs file. The .equals() method allows us to  actually compare id values. == and === apparently wouldn't work because both of these values are objects and this for some reason wouldn't work. -->
@@ -89,3 +91,7 @@
               </div>
               <% } %>
   </main>
+  <script>
+    const mapToken = "<%-process.env.MAPBOX_TOKEN%>";
+  </script>
+  <script src="/javascripts/detailsPageMap.js"></script>

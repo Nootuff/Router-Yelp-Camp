@@ -1,6 +1,8 @@
 const Campground = require("../models/campground"); //imports the Mongoose schema template from campground.js in the models folder.
-
-const { cloudinary } = require("../cloudinary"); //imports cloudinary
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding'); //imports Mapbox stuff from the Mapbox npm package. Apparently geocoding is only one of the systems you can download, there are many others.
+const mapBoxToken = process.env.MAPBOX_TOKEN; //imports mapbox token from the .env file, the token itself comes from your mapbox account. 
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken }) //sets up your mapbox integration with your token and assigns this set-up, functional instance of Mapbox to this const? 
+const { cloudinary } = require("../cloudinary"); //imports cloudinary from the index.js
 
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({}) //Find everything in campgrounds collection. This const holds them all. Becasue of await, render doesn't occur until campgrounds has gathered all data. 
@@ -12,14 +14,19 @@ module.exports.renderNewForm = function (req, res) { //isLoggedIn is the the mid
 }
 
 module.exports.createCampground = async (req, res, next) => {//catchAsync is the function being imported above for the js file with the same name, it is the async error handling in this function. You need the isLoggedIn middleware here to make sure no one can use Postman or Ajax or something ot access this post route when they are not loggedin, it's protection.
-    console.log(req.body.campground);
-    const campground = new Campground(req.body.campground); //No idea what req.body.campground actually is or what "campground" refers to, possibly the object that is created in new.ejs in that form, from the data that is inputted. 
+const geoData = await geocoder.forwardGeocode({ //forwardGeocode is a method imported from mapbox, needs a set up instance of mapbox, like the one held in const geocoder to use. 
+    query: req.body.campground.location, //Takes the entered location of the campground. 
+    limit: 1 //We only want one result.
+}).send()
+    const campground = new Campground(req.body.campground); //No idea what req.body.campground actually is or what "campground" refers to here, possibly the object that is created in new.ejs using the data inputted by the user into that form. 
+    campground.geometry = geoData.body.features[0].geometry; //Features is an array that is sent back by mapbox using const geoData above, we want the first item in that array then the geometry.coordinates property of that first item, this is then set as the geometry value of this new instance of campground. 
     campground.images = req.files.map(file => ({ url: file.path, filename: file.filename })) //This syntax is called implicit Returns. All the values like path come from Multer parsing the image I think, "file" is just a placeholder, can be anything. The way this function works, if you uploaded 2 files, they would be placed in an array by upload.array and added to "request.files" which can be accessed with req.files & is shown in the console.log above. Map() is then used to go over that array and assign path and filename to the images object of the new campground object you just created I think under the url and filename values.
     campground.author = req.user._id; //req.user is automatically added in, they have to be logged in to even reach this create campground page, the user details are taken from that somehow. The author value of this campground is set to the user._id of the user who made this post request.
     console.log("Campground here", campground)
     await campground.save(); //The await means the .save() has to happen before the redirect can run.
     req.flash("success", "You've created a new campground!"); //Triggers the flash message before the redirect after you create a campground. 
     res.redirect(`/campgrounds/${campground._id}`); //String template literal, note the backticks. Maybe you have to use string template literals for these page addresses? Passing a variable in never seems to work. 
+    
 }
 
 module.exports.showCampground = async (req, res) => { //Note that this has to be a lower  get route on the page or the system will interpret anything anything entered into the url after campgrounds/ as the :id you are attempting to search for eg. system will attempt to search for something with the the id of "new" instead of loading the "new" route. This must be lower as the system goes vertically down the page, the system will look at everything above it first. 

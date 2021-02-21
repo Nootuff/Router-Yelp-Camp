@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Welcome to YelpCamp</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/CSS/styles.css"> <!-- This works because of the app.use statment in app.js setting dirname to public-->
-       
-    </head>
-    <body>
-        <%- include("partials/header") %>
+
+<head>
+    <title>Welcome to YelpCamp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/CSS/styles.css">
+    <!-- This works because of the app.use statment in app.js setting dirname to public-->
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script> <!-- This imports the functions that let you render maps.-->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
+
+</head>
+
+<body>
+    <%- include("partials/header") %>
         <%- include("partials/flash") %>
-        <%- body %>
-    </body>
-    <script src="/javascripts/validateForms.js"></script>  <!-- This imports a JavaScript function for disabling form submissions if there are invalid (empty) fields, the file is stored in the public folder. Since this is in the boilerplate, this function is avaialble on every page. -->
+            <%- body %>
+</body>
+<script src="/javascripts/validateForms.js"></script>
+<!-- This imports a JavaScript function for disabling form submissions if there are invalid (empty) fields, the file is stored in the public folder. Since this is in the boilerplate, this function is avaialble on every page. -->
+
 </html>
