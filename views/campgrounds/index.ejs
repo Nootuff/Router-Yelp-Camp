@@ -1,5 +1,6 @@
 <% layout("/boilerplate") %>
 <main>
+  <div id="map" style="width: 100%; height: 500px"></div>
   <section>
     <h1>All the campgrounds</h1>
     <a href="/campgrounds/new"> Create a new campground</a>
@@ -15,4 +16,9 @@
       <ul>
   </section>
 </main>
-<!-- <script type="text/javascript" src="newjavascript.js"></script> -->
+<script>
+ 
+  const mapToken = "<%-process.env.MAPBOX_TOKEN%>";
+  const campgroundsLocation = {features: <%- JSON.stringify(campgrounds) %>}; //No idea, this is used in the cluster map. I think the mapbox cluser map needs data to be entered into it from an object with a value of "features"
+</script>
+<script src="/javascripts/clusterMap.js"></script>

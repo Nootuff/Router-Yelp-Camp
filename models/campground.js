@@ -9,8 +9,10 @@ const ImageSchema = new Schema({
 
 ImageSchema.virtual("thumbnail").get(function(){ //"thumbnail" is a placeholder, it can be called anything. The virtual method, not sure what it is, I think it means the modified image isn't being stored anywhere in our database, the transformed image isn't being stored anywhere, the image is just being modified each time it is called through the .replace below. Thumbnail also seems to be soemthing you can call on your pages 
 return this.url.replace("/upload", "/upload/w_200"); //"this" refers to the particular image. This code takes each images url and runs it through this replace method that adds in the w_200, more on this is detailed at the bottom of your mongo db basics notes. It's to do with Cloudinary's transformation system, adding in a little code can modify the image as its sent from the site. 
+});
 
-})   
+const opts = { toJSON: { virtuals: true } };
+ //Converts virtuals to json? This is something to do with clicking on the index map's unclustered points and getting a popup.
 
 const campgroundSchema = new mongoose.Schema({ //Your schema, these are the only properties you can have in your database.
   title: String,
@@ -38,8 +40,12 @@ ref: "User" //Takes an objectID from the User model just like Review below, allo
       type: Schema.Types.ObjectId,
       ref: "Review" //reviews takes an ObjectId from the Review model, the campground can have a review stored in its database as an object. 
     }
-  ]
-});
+  ],
+}, opts); //Includes the code from the opts const above. 
+
+campgroundSchema.virtual("properties.popUpMarkup").get(function(){ //I have no idea what this is, something to do with the index.js map, when you click on one of the red points you get the popup, this is the code for the interior text for that. popUpMarkup is our name and it's being saved to something called "properties" which mapbox needs to access this I think. Not sure where properties is.
+  return `<i><a href="/campgrounds/${this._id}">${this.title}</a></i>` //This refers to this particular campground instance/
+  });  
 
 campgroundSchema.post("findOneAndDelete", async function (item) { //This is a post middleware, runs after something? It has access to the campground (item) that that was just deleted, as, in the process of deleting, the campground is passed to this middleware. This middleware will only work when a campground is removed by findOneAndDelete like it is in the campground delete route in the campgrounds routes page. If the campground was being removed by some other means this middleware wouldn't work. The delete methods have to match maybe? 
   console.log(item)

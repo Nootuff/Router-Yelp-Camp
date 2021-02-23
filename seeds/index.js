@@ -24,18 +24,21 @@ const sample = array => array[Math.floor(Math.random() * array.length)]; //This 
 const seedDB = async () => {
     await Campground.deleteMany({}); //I think this will delete everything already in the Campground collection so that new objects generated below can be added in . This function clears out the database of everything in it, ({}) means everything. This activates each time node index.js is run.
     await Review.deleteMany({}); //Deletes all reviews on reseed. 
-    for (let i = 0; i < 50; i++) { //This will generate 50 cities with locations and randomized titles.
-        const random18 = Math.floor(Math.random() * 18)  //There are 18 city objects in the array in cities.js, this gens a new number between 0 and 18 I think.
+    for (let i = 0; i < 200; i++) { //This will generate 50 cities with locations and randomized titles.
+        const random116 = Math.floor(Math.random() * 116)  //There are 116 city objects in the array in cities.js, this gens a new number between 0 and 116 I think.
         const costOfStaying = Math.floor(Math.random() * 20) + 10;
         const camp = new Campground({ //Creates a new object for campgrounds, using Campground schema does this 50 times. 
             author: "60204e2b38d78a44cc18e9c0", //This isn't a special number or anything, its the ObjectId of the Adam user in the users database you created. IF you delte the Adam user this number won't mean anything. 
-            location: `${Cities[random18].city}, ${Cities[random18].state}`,
+            location: `${Cities[random116].city}, ${Cities[random116].state}`,
             title: `${sample(descriptors)} ${sample(places)}`, //picks random values from descriptors & places & puts them together to make a title.
             description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             price: costOfStaying,
            geometry: { //Map for every camp points to Epsom, Surrey 
-               coordinates: [ -0.2675, 51.33611 ], 
-               type: 'Point' 
+            type: 'Point',
+               coordinates: [
+                Cities[random116].longitude,
+                Cities[random116].latitude,
+                ] 
             },
             images: [
                 {
