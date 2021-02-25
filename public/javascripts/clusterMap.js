@@ -7,6 +7,8 @@
         zoom: 3
     });
 
+    map.addControl(new mapboxgl.NavigationControl(),"bottom-left"); //This adds in the control box in the bottom-left hand corner of the map. 
+
     map.on('load', function () { //"load" is an event like mouseover.
         // Add a new source from our GeoJSON data and
         // set the 'cluster' option to true. GL-JS will

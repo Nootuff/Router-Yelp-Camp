@@ -6,6 +6,8 @@ const map = new mapboxgl.Map({
     zoom: 11 // starting zoom
 });
 
+map.addControl(new mapboxgl.NavigationControl(),"bottom-left"); //This adds in the control box in the bottom-left hand corner of the map. 
+
 new mapboxgl.Marker() //The code for the marker on the map. 
 .setLngLat(campgroundLocation.geometry.coordinates) //All these things with . in front of them are apparently methods in the Marker object which is imported from mapbox.
 .setPopup(
