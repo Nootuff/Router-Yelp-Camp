@@ -18,6 +18,7 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user"); //Imports the review schema.
 const catchAsync = require("./utilities/catchAsync"); //Imports the function in catchAsync.js, allows us to do async error handling. 
 const ejs = require('ejs');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const userRoutes = require("./routes/users");
 const campgroundRoutes = require('./routes/campgrounds');//Imports the campgrounds routes, this is to do with router.
@@ -77,6 +78,7 @@ app.use(function (req, res, next) {//has to come before the route handlers below
 app.use("/", userRoutes) //These are "route handlers".
 app.use('/campgrounds', campgroundRoutes)//All the route paths in campgrounds.js all now start with "campgrounds" becasue of router. These are called "route handlers"
 app.use('/campgrounds/:id/reviews', reviewRoutes) //All the route paths in campgrounds.js all now start with "campgrounds/:id/reviews"
+app.use(mongoSanitize()); //Activates mongoSanitize which prevents hackers using code injection attacks on your site, security software. 
 
 const Joi = require('joi'); //This is used for error handling 
 const { campgroundSchema, reviewSchema } = require("./schemas.js") //Imports the code from this js document, this our or joi schema. The name of this const is campgroundSchema or it could be reviewSchema, this const is destructured. In the validateCampground function below the Joi code this const holds is being used. validateCampground is being used in the post and put routes below, the Joi code in this const is being used as part of that. 
