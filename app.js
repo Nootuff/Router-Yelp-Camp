@@ -50,7 +50,7 @@ app.use(express.urlencoded({ extended: true })); //This is what allows you to pa
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname + '/public'))); //This allows you to use the stuff in your public folder like the css doc and the js functions. When we use path.join with __dirname in the combination like that, we ensure that it always gets the correct path to the public folder, regardless of the terminal location from which we run the node command (and regardless of the specific OS file structure and path syntax), even if it's not in the main project folder.
 
-const secret = process.env.SECRET || "bigSecret";
+const secret = process.env.SECRET || "secretGoesHere"; //There is no SECRET in your .env because there is already one created automatically on Heroku, this will either pull the secret from that file if this is being hosted on that site or it will be the string if it is being hosted and accessed on your laptop. 
 
 const store = MongoStore.create({ //This creates a mongo store to store session data. 
     mongoUrl: dbUrl,
@@ -185,6 +185,8 @@ app.use((error, req, res, next) => { //error in this case holds the value of the
     res.status(statusCode).render("error.ejs", { error });//This is the error handling, this loads the error page and is triggered by something going wrong in any of the async functions above, it is triggered by catchAsync. When catchAsync passes to "next" it is activating this route, this is the "next" in that context. Err is the error that has occurred. 
 })
 
-app.listen(3000, function () {
-    console.log('Server online on port 3000');
+const port = process.env.PORT || 3000; //This works just like the secret const above. Heroku has it's own port that will be used if the site is hosted there, otherwise it's 3000 if accessed locally. 
+
+app.listen(port, function () {
+    console.log(`Server online on port ${port}`); //String template literal, accuratley shows the port you are serving on Heroku or local. 
 });
