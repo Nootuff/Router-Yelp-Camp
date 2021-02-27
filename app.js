@@ -1,7 +1,6 @@
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production") { //This checks to see what mode the app is in, if it's NOT in production mode, we have access to all the keys in the .env file that make mapbox and cloudinary work. If we're in production mode, that file will not be required and none of the stuff inside will be available.
     require("dotenv").config()
 }
-
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -18,7 +17,8 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user"); //Imports the review schema.
 const catchAsync = require("./utilities/catchAsync"); //Imports the function in catchAsync.js, allows us to do async error handling. 
 const ejs = require('ejs');
-const mongoSanitize = require('express-mongo-sanitize');
+const mongoSanitize = require('express-mongo-sanitize'); //IMports a security program to deal with injection attacks. 
+const helmet = require('helmet'); 
 
 const userRoutes = require("./routes/users");
 const campgroundRoutes = require('./routes/campgrounds');//Imports the campgrounds routes, this is to do with router.
@@ -47,11 +47,12 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname + '/public'))); //This allows you to use the stuff in your public folder like the css doc and the js functions. When we use path.join with __dirname in the combination like that, we ensure that it always gets the correct path to the public folder, regardless of the terminal location from which we run the node command (and regardless of the specific OS file structure and path syntax), even if it's not in the main project folder.
 
 const sessionConfig = {
+    name: "sessionName", //This names the session
     secret: "secretGoesHere",
     resave: false,
     saveUninitialized: true,
     cookie: {
-        httpOnly: true, //This thing is optional, if its included, the cookie cannot be accessed through or interfered with by a client side script. This is extra security. 
+        httpOnly: true, //This thing is optional, if its included, the cookie cannot be accessed through or interfered with by a client side script. This is extra security. Hackers cannot see confidential cookies, you should have it. 
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7, //This is when the cookie is programmed to expire. It is todays date, Date.now is in milliseconds. We want this cookie to expire in a week so the sum is 1000 milliseconds in a second, 60 secs in a minute, 60 mins in an hour, 24 hours etc. So the date it will expire is today's date plus that time.
         maxAge: 1000 * 60 * 60 * 24 * 7
         //All this expiration stuff is because we don't want users to log in and stay logged in, they will get logged out after a week? 
@@ -60,6 +61,51 @@ const sessionConfig = {
 
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(helmet());
+
+const scriptSrcUrls = [ //The next 4 consts are to do with Helmet. These arrays contain lists of software that the website allows to run on it. such as bootstrap and fontawesome if you want it. Without these lists of things the website is allowing, the maps wouldn't work and neither would the cloudinary upload nor anything like that. These lists can be modified to include or exclude some things. This is security so hackers can't add malicious scripts to your site. If you add in a new font or a new script from somewhere else you will need to add it in to this list. 
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net",
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.mapbox.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+];
+const connectSrcUrls = [
+    "https://api.mapbox.com/",
+    "https://a.tiles.mapbox.com/",
+    "https://b.tiles.mapbox.com/",
+    "https://events.mapbox.com/",
+];
+const fontSrcUrls = [];
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [ //This is where you specify where images can be sourced from, "self" means images stored in the actual folders of the project. 
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/dfj7xeo4n/", //SHOULD MATCH YOUR CLOUDINARY Cloud name on your ACCOUNT! This line allows images to come from your cloudinary hosting. 
+                "https://images.unsplash.com/",
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls],
+        },
+    })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());

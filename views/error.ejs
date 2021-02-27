@@ -1,5 +1,7 @@
 <% layout("/boilerplate") %>
 <div>
     <p><b><%=error.message %></b></p>
+    <% if (process.env.NODE_ENV !== "production") { %> <!--This checks to see what mode the app is in, if it's in production mode, triggering an error will only show the title, if we're in development mode, it will show the error stack with all the error details ang things.-->
     <p><b><%=error.stack %></b></p>
+    <% } %>
 </div>
