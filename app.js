@@ -19,12 +19,16 @@ const catchAsync = require("./utilities/catchAsync"); //Imports the function in 
 const ejs = require('ejs');
 const mongoSanitize = require('express-mongo-sanitize'); //IMports a security program to deal with injection attacks. 
 const helmet = require('helmet'); 
+const MongoStore = require('connect-mongo').default;//Imports connect-mongo. This package lets us store session data. 
 
 const userRoutes = require("./routes/users");
 const campgroundRoutes = require('./routes/campgrounds');//Imports the campgrounds routes, this is to do with router.
 const reviewRoutes = require('./routes/reviews');
 
-mongoose.connect('mongodb://localhost:27017/test', { //This is all part of the mongoose setup. Apparently "test" is the name of the Database everything is being uploaded to, the reviews and the campgrounds also a bunch of movies from your MongooseTest app. This could create a problem later because you copied the origional to create this new version when colt switched to Router. 
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/test'; // This imports DB_URL from your .env file. This contains the url from mongoDB atlas in the database access setion, the url contains the password for yelpCamp_User. OR it can be your local storage database. 
+
+//'mongodb://localhost:27017/test'
+mongoose.connect(dbUrl, { //This is all part of the mongoose setup. Apparently "test" is the name of the Database everything is being uploaded to, the reviews and the campgrounds also a bunch of movies from your MongooseTest app. This could create a problem later because you copied the origional to create this new version when colt switched to Router. 
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -46,9 +50,23 @@ app.use(express.urlencoded({ extended: true })); //This is what allows you to pa
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname + '/public'))); //This allows you to use the stuff in your public folder like the css doc and the js functions. When we use path.join with __dirname in the combination like that, we ensure that it always gets the correct path to the public folder, regardless of the terminal location from which we run the node command (and regardless of the specific OS file structure and path syntax), even if it's not in the main project folder.
 
+const secret = process.env.SECRET || "bigSecret";
+
+const store = MongoStore.create({ //This creates a mongo store to store session data. 
+    mongoUrl: dbUrl,
+    secret: secret, //the secret property is set to const secret which can be one of 2 things. 
+    touchAfter: 24 * 60 * 60    //Explanation for this option on the docs, limits the number of times a session is saved so it's not saving constantly. The numbers are an hour in seconds I think, session saved every hour. 
+    });
+
+    store.on("error", function(error){
+        console.log("Session Store error!", error)
+        });
+        
+
 const sessionConfig = {
+    store: store, //THis passes in the mongo store up above and makes it available. The "store" property here is set to const store up above.
     name: "sessionName", //This names the session
-    secret: "secretGoesHere",
+    secret: secret, //value of secret set to const secret.
     resave: false,
     saveUninitialized: true,
     cookie: {

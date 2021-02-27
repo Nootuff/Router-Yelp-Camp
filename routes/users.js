@@ -11,6 +11,10 @@ User: Teeth
 pass: test1
 email: teeth@gmail.com
 
+User: Atlas
+pass: Atlas21
+email: atlas@atlas.com
+
 */
 
 const express = require("express");
