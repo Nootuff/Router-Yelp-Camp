@@ -56,9 +56,14 @@ module.exports.renderEditForm = async (req, res) => { //isLoggedIn & isAuthor ar
 
 module.exports.updateCampground = async (req, res) => {
     const idHolder = req.params.id; //Holds the current campground id taken from the URL?
+    const geoData = await geocoder.forwardGeocode({ //forwardGeocode is a method imported from mapbox, needs a set up instance of mapbox, like the one held in const geocoder to use. 
+        query: req.body.campground.location, //Takes the entered location of the campground. 
+        limit: 1 //We only want one result.
+    }).send()
     const campground = await Campground.findByIdAndUpdate(idHolder, { ...req.body.campground }) //The 3 dots are the spread operator this somehow allows you to use the values contained within the square brackets on the name values in the forms on the new and edit.ejs pages.
     const imgs = req.files.map(file => ({ url: file.path, filename: file.filename }));//JUst like the create campground route above, this time, we are editing an existing campground not overwriting empty values with images as with the create route so we are pushing any uploaded files to an existing array of image files.
-    campground.images.push(...imgs);  //Three dots, spread operator, no idea. Somehow the data is being extracted from the uploaded images array, assigned to imgs and then pushed in the campround.images array. 
+    campground.images.push(...imgs);  //Three dots, spread operator, no idea. Somehow the data is being extracted from the uploaded images array, assigned to imgs and then pushed in the campround.images array.
+    campground.geometry = geoData.body.features[0].geometry; //Resets the map to any new location that was added in the edit. 
     await campground.save();
     if (req.body.deleteImages) { //If there are actually images present in that deleteImages array ie. if someone has selected some images on the edit page. 
         for (let filename of req.body.deleteImages) { //Loop over all images added to the deleteImages array, this would probably work with a for loop too.

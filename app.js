@@ -28,7 +28,7 @@ const reviewRoutes = require('./routes/reviews');
 const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/test'; // This imports DB_URL from your .env file. This contains the url from mongoDB atlas in the database access setion, the url contains the password for yelpCamp_User. OR it can be your local storage database. 
 
 //'mongodb://localhost:27017/test'
-mongoose.connect(dbUrl, { //This is all part of the mongoose setup. Apparently "test" is the name of the Database everything is being uploaded to, the reviews and the campgrounds also a bunch of movies from your MongooseTest app. This could create a problem later because you copied the origional to create this new version when colt switched to Router. 
+mongoose.connect(dbUrl, { //This is all part of the mongoose setup. Apparently "test" in the old database URL is the name of the Database everything is being uploaded to, the reviews and the campgrounds also a bunch of movies from your MongooseTest app. This could create a problem later because you copied the origional to create this new version when colt switched to Router. 
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
